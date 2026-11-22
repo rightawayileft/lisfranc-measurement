@@ -1,0 +1,3 @@
+# Preserve the exact bytes of the validated, self-contained demo on every OS.
+demo/Lisfranc-Review.html -text
+*.patch text eol=lf

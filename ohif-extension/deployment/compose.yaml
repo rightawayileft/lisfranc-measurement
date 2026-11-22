@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_DB: lisfranc
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+    secrets:
+      - postgres_admin_password
+    volumes:
+      - lisfranc_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "lisfranc"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: deployment/server.Dockerfile
+    environment:
+      LISFRANC_APP_ORIGIN: ${LISFRANC_APP_ORIGIN:?Set the hospital OHIF HTTPS origin}
+      LISFRANC_DATABASE_URL_FILE: /run/secrets/runtime_database_url
+      LISFRANC_PROXY_TOKEN_FILE: /run/secrets/proxy_token
+    secrets:
+      - runtime_database_url
+      - proxy_token
+    ports:
+      - "127.0.0.1:38612:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  lisfranc_postgres:
+
+secrets:
+  postgres_admin_password:
+    file: ${LISFRANC_PG_ADMIN_PASSWORD_FILE:?Set the PostgreSQL admin password file path}
+  runtime_database_url:
+    file: ${LISFRANC_RUNTIME_DSN_FILE:?Set the restricted runtime DSN file path}
+  proxy_token:
+    file: ${LISFRANC_PROXY_SECRET_FILE:?Set the proxy token file path}

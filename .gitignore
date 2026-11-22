@@ -1,0 +1,18 @@
+# Local-only review materials, intake files, and credentials
+private/
+*.dcm
+*.dicom
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.zip
+*.tgz
+*.log
+*.htpasswd
+*.pem
+*.key
+.env
+.env.*
+demo/*.html
+!demo/Lisfranc-Review.html
