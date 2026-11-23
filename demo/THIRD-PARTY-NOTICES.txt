@@ -1,5 +1,27 @@
 Third-party notices for the Lisfranc Review standalone demo
 
+Bundled radiograph credits
+
+Felipe Kitamura. The UNIFESP X-Ray Body Part Classification Dataset, version 1.
+https://www.kaggle.com/datasets/felipekitamura/unifesp-xray-bodypart-classification
+The 20 images labelled UNIFESP are distributed under CC BY-NC-SA 4.0.
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+Source DICOMs were rendered to 256 x 256 PNGs with linear min/max
+windowing and MONOCHROME1 inversion when applicable. Image dimensions
+are preserved. The images have been paired and renamed for the
+noncommercial demonstration. Redistribution of these image derivatives
+is noncommercial and subject to ShareAlike and attribution.
+
+Wang Qiong, Dongdong Ji, Junhu Wang, Liang Liu, Xinquan Yang, Yan Zhang,
+Jingqi Liang, Peilong Liu, and Hong-Mou Zhao. HVAngleEst: A Dataset for
+End-to-end Automated Hallux Valgus Angle Measurement from X-Ray Images.
+Science Data Bank, version 5.0.0 (2025).
+https://doi.org/10.57760/sciencedb.19819
+The five images labelled HVAngleEst are distributed under CC BY 4.0.
+https://creativecommons.org/licenses/by/4.0/
+Five published JPEGs were selected and assigned new demo labels.
+The image bytes are unchanged.
+
 React 19.3.0, React DOM 19.3.0, and Scheduler 0.28.0
 
 MIT License

@@ -1,9 +1,9 @@
 # Lisfranc interval review for OHIF 3.7
 
-`@msk/extension-lisfranc` `0.2.1-ohif3.7.0` adds **Clinical** and **Demo** tabs to OHIF's Lisfranc panel. The source folders are `workspaces/clinical` and `workspaces/demo`.
+`@msk/extension-lisfranc` `0.2.2-ohif3.7.0` adds **Clinical** and **Demo** tabs to OHIF's Lisfranc panel. The source folders are `workspaces/clinical` and `workspaces/demo`.
 
 - **Clinical** reviews the active OHIF stack using the host DICOM viewer and saves to a shared hospital PostgreSQL service. A complete manual review moves its frame to **Corrected** for all authorized reviewers on approval. Reopening returns it to **To review**. **Shared Corrected** lists approved counts across enrolled studies. The folders below the list show the active study's frames.
-- **Demo** opens the offline review app with ten generated AP/lateral pairs and hand-authored starter landmarks and calipers. An approved change to a measurement or finding moves the case to **Corrected**. An unchanged approval moves to **Reviewed**. Editing a draft keeps it in **To review** until approval.
+- **Demo** opens the offline review app with 25 real radiographs in 15 cases. Place the interval landmarks manually or choose **Add local images** to open approved JPEG or PNG radiographs from your device.
 
 Demo saves reviews in its own browser-local storage. Clinical uses the shared database and the host's existing DICOM data source. Closing Demo returns to the clinical viewport. [Hospital service setup](deployment/README.md)
 
@@ -23,7 +23,7 @@ The overlay uses zero-based source pixel centers. The calculations independently
 
 Use the worklist to switch between **To review**, **Corrected**, and **Reviewed**. To revise an approved case, open it and reopen the review. The app includes a guide, image tools, and review export and import. It loads from a same-origin HTML asset produced by the OHIF build. The **Open demo in a new tab** link provides a full-size view if the host disallows frames. For a standalone demonstration, open [the repo's canonical Demo HTML](../demo/Lisfranc-Review.html) directly.
 
-The Demo contains generated projection schematics and hand-authored workflow examples in pixel units. [Demo guide](../demo/README.md)
+The 15 bundled cases are ten UNIFESP AP/lateral pairs and five HVAngleEst AP images. UNIFESP image derivatives are available under CC BY-NC-SA 4.0 for noncommercial use and HVAngleEst images under CC BY 4.0. Use **Add local images** inside the Demo to open approved AP images and an optional lateral. The browser holds selected pixels in memory and saves review annotations locally for the selected image set. Open the standalone HTML from disk or use an HTTPS viewer to select local files. Measurements in Demo are in pixels. [Image attribution and terms](../demo/THIRD-PARTY-NOTICES.txt) · [Demo guide](../demo/README.md)
 
 ## Install in a staging source checkout
 
@@ -48,9 +48,9 @@ node ./platform/cli/src/index.js link-extension "$PWD/extensions/lisfranc"
 git apply "$EXT/staging/longitudinal-v3.7.0-beta.110.patch"
 ```
 
-The OHIF CLI registers the package in `platform/app/pluginConfig.json` and writes a local path in `platform/app/.webpack/webpack.pwa.js`. Run the link in each build environment. The supplied patch adds the Lisfranc panel first and opens the stock longitudinal mode's right panel. For a custom mode, register `@msk/extension-lisfranc` version `0.2.1-ohif3.7.0` in the mode's dependencies, add `@msk/extension-lisfranc.panelModule.lisfranc` to `rightPanels` and set `rightPanelDefaultClosed` to `false`.
+The OHIF CLI registers the package in `platform/app/pluginConfig.json` and writes a local path in `platform/app/.webpack/webpack.pwa.js`. Run the link in each build environment. The supplied patch adds the Lisfranc panel first and opens the stock longitudinal mode's right panel. For a custom mode, register `@msk/extension-lisfranc` version `0.2.2-ohif3.7.0` in the mode's dependencies, add `@msk/extension-lisfranc.panelModule.lisfranc` to `rightPanels` and set `rightPanelDefaultClosed` to `false`.
 
-Build the synthetic-only viewer first. Its local-files configuration opens generated DICOM fixtures through `/localbasic`. The Demo HTML and third-party notices come from the repository's canonical synthetic example.
+Build the local staging viewer first. Its local-files configuration opens generated Clinical test DICOMs through `/localbasic`. The Demo uses the licensed radiographs and notices from the canonical HTML.
 
 ```sh
 cp "$EXT/staging/lisfranc-synthetic.js" platform/app/public/config/
@@ -91,10 +91,12 @@ git restore --source "$BASELINE" -- modes/longitudinal/src/index.js \
 
 ## Verification
 
-The backport derives from the repository's [0.2.0 package](../ohif-extension/README.md). Both variants use the same deterministic interval calculations, calibration rules, shared Clinical service and browser-local synthetic Demo.
+The backport derives from the 0.2.0 Clinical service and measurement implementation. Both variants use the same interval calculations, calibration rules, shared Clinical service and browser-local Demo. [OHIF 3.11 package](../ohif-extension/README.md)
 
-The 3.7 production build used Node 24.13.0, Yarn Classic 1.22.22 and webpack 5.88.2. Its build hash was `e5735c2e4c188098cec3` with two bundle-size warnings. The stock Cornerstone loader and OHIF lockfile were used throughout. All 30 JavaScript unit tests passed. The WADO-RS browser smoke checked two fresh browser sessions, each selecting frames 1, 2, 1, 2. The selected and loaded image IDs, Clinical labels, decoded pixels and viewport pixel values matched the source frame on every visit.
+The original 3.7 backport production build used Node 24.13.0, Yarn Classic 1.22.22 and webpack 5.88.2. That build, `e5735c2e4c188098cec3`, had two bundle-size warnings. The stock Cornerstone loader and OHIF lockfile were used throughout. All 30 JavaScript unit tests passed. The WADO-RS browser smoke checked two fresh browser sessions, each selecting frames 1, 2, 1, 2. The selected and loaded image IDs, Clinical labels, decoded pixels and viewport pixel values matched the source frame on every visit.
 
 The shared-service browser smoke passed with PostgreSQL 16.2. It exercised two reviewers, study claims, approval and reopening, audit history, separate single-frame instances, browser-local Demo edits, and rejection of an unenrolled study. Both the tangent and the four-corner midpoint proxy matched independent calculations on anisotropic calibrated pixels. Uncalibrated images displayed pixels. The blocked local multiframe case exposed no edit controls and generated no review writes. The backend suite passed 12 tests, with the filesystem symlink test skipped on Windows.
+
+Version `0.2.2-ohif3.7.0` passed production build `4de2a6dc035e1626a9da` on the same pinned viewer with two bundle-size warnings. The browser verified that the served Demo matched the canonical HTML and decoded all 25 licensed radiographs. The shared PostgreSQL smoke, local multiframe guard and WADO-RS frame identity all passed again.
 
 OSV checks on November 23, 2026 found no matching advisory for the exact React and React DOM versions, the Cornerstone core/tools/image-loader versions or the 16 pinned Python service packages. The stock 3.7 lockfile had matches for 128 of 2,754 registry package/version pairs, including build and documentation dependencies. The check excluded container images, a Git-sourced dependency and site-specific patches. [Host dependency notes](../README.md)

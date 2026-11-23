@@ -1,6 +1,6 @@
 # Shared Clinical deployment
 
-The Clinical panel talks to an on-premises PostgreSQL service through the same HTTPS origin as OHIF. Demo keeps its own browser-local reviews and uses generated projection schematics.
+The Clinical panel talks to an on-premises PostgreSQL service through the same HTTPS origin as OHIF. Demo keeps its own browser-local reviews and uses openly licensed radiographs. The bundled UNIFESP derivatives are for noncommercial use. [Image attribution and terms](../../demo/THIRD-PARTY-NOTICES.txt)
 
 Each enrolled frame has one shared review. Approval places it in Corrected for every reviewer. Reopening moves it back to To review. A reviewer takes a temporary study claim before editing or changing status. Other reviewers may view and inspect the history during the claim. It renews while editing and expires if the browser stops renewing. Version checks also reject stale edits. Each accepted save records the authenticated reviewer, revision, timestamp and measurement snapshot. The current frame's **History** is read-only. DICOM pixels remain with the existing OHIF data source.
 

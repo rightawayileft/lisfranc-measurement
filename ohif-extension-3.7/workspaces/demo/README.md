@@ -1,6 +1,6 @@
 # Demo workspace
 
-Run `npm run prepare:demo` at the extension root to copy the verified [canonical synthetic Demo](../../../demo/Lisfranc-Review.html) and its [third-party notices](../../../demo/THIRD-PARTY-NOTICES.txt) into this directory. The same step runs before packaging.
+Run `npm run prepare:demo` at the extension root to copy the verified [canonical Demo with licensed radiographs](../../../demo/Lisfranc-Review.html) and its [third-party notices](../../../demo/THIRD-PARTY-NOTICES.txt) into this directory. The same step runs before packaging. The UNIFESP derivatives are noncommercial under CC BY-NC-SA 4.0 and the HVAngleEst images are CC BY 4.0. Use **Add local images** for approved JPEG or PNG radiographs. [Demo guide](../../../demo/README.md)
 
 - **To review** contains unstarted cases, drafts, and reopened reviews.
 - **Corrected** contains approvals whose saved landmarks, cortex relation, measurements, or fracture finding differ from the applied starter landmarks.

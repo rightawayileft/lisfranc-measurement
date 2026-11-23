@@ -1,9 +1,9 @@
 # Lisfranc interval review for OHIF
 
-`@msk/extension-lisfranc` 0.2.0 adds **Clinical** and **Demo** tabs to OHIF's Lisfranc panel. The source folders are `workspaces/clinical` and `workspaces/demo`.
+`@msk/extension-lisfranc` `0.2.1` adds **Clinical** and **Demo** tabs to OHIF's Lisfranc panel. The source folders are `workspaces/clinical` and `workspaces/demo`.
 
 - **Clinical** reviews the active OHIF stack using the host DICOM viewer and saves to a shared hospital PostgreSQL service. A complete manual review moves its frame to **Corrected** for all authorized reviewers on approval. Reopening returns it to **To review**. **Shared Corrected** lists approved counts across enrolled studies. The folders below the list show the active study's frames.
-- **Demo** opens the offline review app with ten generated AP/lateral pairs and hand-authored starter landmarks and calipers. An approved change to a measurement or finding moves the case to **Corrected**. An unchanged approval moves to **Reviewed**. Editing a draft keeps it in **To review** until approval.
+- **Demo** opens the offline review app with 25 real radiographs in 15 cases. Place the interval landmarks manually or choose **Add local images** to open approved JPEG or PNG radiographs from your device.
 
 Demo saves reviews in its own browser-local storage. Clinical uses the shared database and the host's existing DICOM data source. Closing Demo returns to the clinical viewport. [Hospital service setup](deployment/README.md)
 
@@ -21,7 +21,7 @@ The overlay uses zero-based source pixel centers. The calculations independently
 
 Use the worklist to switch between **To review**, **Corrected**, and **Reviewed**. To revise an approved case, open it and reopen the review. The app includes a guide, image tools, and review export and import. It loads from a same-origin HTML asset produced by the OHIF build. The **Open demo in a new tab** link provides a full-size view if the host disallows frames. For a standalone demonstration, open [the repo's canonical Demo HTML](../demo/Lisfranc-Review.html) directly.
 
-The Demo contains generated projection schematics and hand-authored workflow examples in pixel units. [Demo guide](../demo/README.md)
+The 15 bundled cases are ten UNIFESP AP/lateral pairs and five HVAngleEst AP images. UNIFESP image derivatives are available under CC BY-NC-SA 4.0 for noncommercial use and HVAngleEst images under CC BY 4.0. Use **Add local images** inside the Demo to open approved AP images and an optional lateral. The browser holds selected pixels in memory and saves review annotations locally for the selected image set. Open the standalone HTML from disk or use an HTTPS viewer to select local files. Measurements in Demo are in pixels. [Image attribution and terms](../demo/THIRD-PARTY-NOTICES.txt) · [Demo guide](../demo/README.md)
 
 ## Install in a staging source checkout
 
@@ -41,11 +41,11 @@ git apply --check "$EXT/staging/longitudinal-v3.11.0.patch"
 git apply "$EXT/staging/longitudinal-v3.11.0.patch"
 ```
 
-The patch adds the panel to the stock longitudinal viewer mode and opens it by default. For a site-specific mode, add `@msk/extension-lisfranc` version `0.2.0` to its extension dependencies and `@msk/extension-lisfranc.panelModule.lisfranc` to the viewer layout's `rightPanels`. Build in the same checkout as the link. The CLI adds an absolute local module path to webpack configuration. Replicate the link step in each separate build context.
+The patch adds the panel to the stock longitudinal viewer mode and opens it by default. For a site-specific mode, add `@msk/extension-lisfranc` version `0.2.1` to its extension dependencies and `@msk/extension-lisfranc.panelModule.lisfranc` to the viewer layout's `rightPanels`. Build in the same checkout as the link. The CLI adds an absolute local module path to webpack configuration. Replicate the link step in each separate build context.
 
-`prepare:demo` verifies the canonical synthetic asset from `../demo/Lisfranc-Review.html` and copies it and its third-party notices into the gitignored package asset directory. It also runs before `npm pack`. A packed extension already contains these files.
+`prepare:demo` verifies the canonical licensed Demo HTML from `../demo/Lisfranc-Review.html` and copies it and its third-party notices into the gitignored package asset directory. It also runs before `npm pack`. A packed extension already contains these files.
 
-For a synthetic-only build, copy the supplied local-files configuration into the checkout and use it explicitly. The same bundle supports the shared-storage smoke through a disposable test proxy and database. The smoke opens `/localbasic`, feeds generated DICOMs in memory, and blocks non-loopback browser requests.
+For a local staging build, copy the supplied local-files configuration into the checkout and use it explicitly. The same bundle supports the shared-storage smoke through a disposable test proxy and database. The smoke opens `/localbasic`, feeds generated Clinical test DICOMs in memory, and blocks non-loopback browser requests.
 
 ```sh
 cp "$EXT/staging/lisfranc-synthetic.js" platform/app/public/config/
@@ -82,6 +82,8 @@ Demo reviews use the browser key prefix `lisfranc-ohif-demo-reviews/v1/`. The ar
 
 ## Source and verification
 
-The extension and Clinical service come from the November 18 v0.2.0 handoff package, SHA-256 `88668a4cd2fb8c61bacd72134ae5add920d81ef7a345bcf4a944859daf834fc1`. This staging copy uses the repository's synthetic Demo and the corresponding browser test case labels.
+The extension and Clinical service come from the November 18 v0.2.0 handoff package, SHA-256 `88668a4cd2fb8c61bacd72134ae5add920d81ef7a345bcf4a944859daf834fc1`. Version 0.2.1 loads the canonical Demo with licensed radiographs and local JPEG or PNG selection.
 
-The synthetic-only production build passed on OHIF v3.11.0 and Cornerstone 3.32.5. Webpack 5.95.0 produced build `d428e4299f9bd0948655` with the baseline runtime-cycle and size warnings. All 28 JavaScript tests and 12 PostgreSQL-backed service tests passed. Windows skipped one DICOM symlink test. The loopback Chromium smoke verified named sign-in, two-reviewer claims, shared approval and reopening, revision attribution, and browser-local Demo edits that stay separate from the shared service. Deployment templates and the target server still need site staging verification.
+The original 0.2.0 production build passed on OHIF v3.11.0 and Cornerstone 3.32.5. Webpack 5.95.0 produced that build, `d428e4299f9bd0948655`, with the baseline runtime-cycle and size warnings. All 28 JavaScript tests and 12 PostgreSQL-backed service tests passed. Windows skipped one DICOM symlink test. The loopback Chromium smoke verified named sign-in, two-reviewer claims, shared approval and reopening, revision attribution, and browser-local Demo edits that stay separate from the shared service. Deployment templates and the target server still need site staging verification.
+
+Version 0.2.1 passed the production build and loopback browser smoke on the same viewer commit. Webpack produced build `f5e7797c593a22b826a0` with three warnings. The smoke verified 15 case rows, switched between the AP and lateral views of a licensed pair, saved a manual landmark locally, and verified that the edit stayed outside the shared Clinical service.

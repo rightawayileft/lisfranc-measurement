@@ -1,6 +1,6 @@
 {
   "name": "@msk/extension-lisfranc",
-  "version": "0.2.1-ohif3.7.0",
+  "version": "0.2.2-ohif3.7.0",
   "private": true,
   "description": "Lisfranc clinical review and demonstration workspaces for the OHIF 3.7.0-beta.110 host",
   "type": "module",

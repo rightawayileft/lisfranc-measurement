@@ -120,27 +120,26 @@ async function openDemo(page, tabs) {
   await dialog.waitFor();
   const demo = dialog.frameLocator('iframe[title="Lisfranc demo review"]');
   await demo.getByRole('heading', { name: 'Review worklist', exact: true }).waitFor();
-  assert.equal(await demo.locator('tr[data-case-id]').count(), 10);
+  assert.equal(await demo.locator('tr[data-case-id]').count(), 15);
+  await button(demo, 'HVAngleEst example 05').waitFor();
+  await button(demo, 'Add local images').waitFor();
   return { dialog, demo };
 }
 
-async function editDemoCaliper(page, demo) {
-  await button(demo, 'Synthetic paired case 01').click();
-  await demo.getByRole('heading', { name: 'Synthetic paired case 01', exact: true }).waitFor();
+async function editDemoReview(demo) {
+  await button(demo, 'UNIFESP pair 01').click();
+  await demo.getByRole('heading', { name: 'UNIFESP pair 01', exact: true }).waitFor();
   const guide = demo.getByRole('dialog', { name: 'Quick review guide' });
   if (await guide.isVisible()) await button(guide, 'Start reviewing').click();
-  await button(demo, 'Review Dorsal soft tissue').click();
-  await demo.locator('.view-thumb.selected').filter({ hasText: 'LATERAL' }).waitFor();
-  const handle = demo.getByTestId('finding-soft_tissue-1').locator('circle').first();
-  await handle.waitFor();
-  const box = await handle.boundingBox();
+  await demo.locator('.view-thumb').filter({ hasText: /LATERAL/ }).click();
+  await demo.locator('.view-thumb.selected').filter({ hasText: /LATERAL/ }).waitFor();
+  await demo.locator('.view-thumb').filter({ hasText: /^AP/ }).click();
+  const viewport = demo.getByTestId('dicom-viewport');
+  await viewport.locator('.splash').waitFor({ state: 'hidden' });
+  const box = await viewport.boundingBox();
   assert.ok(box);
-  const x = box.x + box.width / 2;
-  const y = box.y + box.height / 2;
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x + 27, y - 11, { steps: 5 });
-  await page.mouse.up();
+  await demo.getByRole('button', { name: /C1 proximal/ }).click();
+  await viewport.click({ position: { x: box.width * 0.46, y: box.height * 0.60 } });
   await waitText(demo.locator('.save-status'), /^Saved$/);
 }
 
@@ -229,7 +228,7 @@ try {
 
   const demoA = await openDemo(alice, aliceTabs);
   assert.deepEqual(await savedEntries(alice, demoPrefix), {});
-  await editDemoCaliper(alice, demoA.demo);
+  await editDemoReview(demoA.demo);
   assert.equal(Object.keys(await savedEntries(alice, demoPrefix)).length, 1);
   const demoB = await openDemo(bob, bobTabs);
   assert.deepEqual(await savedEntries(bob, demoPrefix), {});
