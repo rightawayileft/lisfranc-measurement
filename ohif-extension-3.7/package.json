@@ -1,0 +1,37 @@
+{
+  "name": "@msk/extension-lisfranc",
+  "version": "0.2.1-ohif3.7.0",
+  "private": true,
+  "description": "Lisfranc clinical review and demonstration workspaces for the OHIF 3.7.0-beta.110 host",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "files": [
+    "src",
+    "workspaces/clinical",
+    "workspaces/demo/Lisfranc-Review.html",
+    "workspaces/demo/THIRD-PARTY-NOTICES.txt",
+    "workspaces/demo/README.md",
+    "workspaces/demo/folders.mjs",
+    "workspaces/demo/folders.test.mjs",
+    "server/*.py",
+    "server/schema.sql",
+    "server/README.md",
+    "deployment/README.md",
+    "deployment/compose.yaml",
+    "deployment/grants.sql",
+    "deployment/nginx-clinical.conf.example",
+    "deployment/requirements.lock",
+    "deployment/server.Dockerfile",
+    "deployment/server.Dockerfile.dockerignore",
+    "staging",
+    "tests"
+  ],
+  "keywords": ["ohif-extension", "ohif", "lisfranc"],
+  "peerDependencies": { "react": "17.0.2", "react-dom": "17.0.2" },
+  "scripts": {
+    "prepare:demo": "node staging/prepare-demo.mjs",
+    "prepack": "node staging/prepare-demo.mjs",
+    "test": "node --test tests/*.test.js workspaces/demo/folders.test.mjs"
+  }
+}

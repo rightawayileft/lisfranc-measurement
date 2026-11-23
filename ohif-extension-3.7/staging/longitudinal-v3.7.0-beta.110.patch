@@ -1,0 +1,25 @@
+diff --git a/modes/longitudinal/src/index.js b/modes/longitudinal/src/index.js
+index 25397a2..0500f98 100644
+--- a/modes/longitudinal/src/index.js
++++ b/modes/longitudinal/src/index.js
+@@ -48,4 +48,5 @@
+ const extensionDependencies = {
++  '@msk/extension-lisfranc': '0.2.1-ohif3.7.0',
+   // Can derive the versions at least process.env.from npm_package_version
+   '@ohif/extension-default': '^3.0.0',
+   '@ohif/extension-cornerstone': '^3.0.0',
+@@ -194,8 +195,12 @@ function modeFactory({ modeConfiguration }) {
+             id: ohif.layout,
+             props: {
+               leftPanels: [tracked.thumbnailList],
+-              rightPanels: [dicomSeg.panel, tracked.measurements],
+-              rightPanelDefaultClosed: true,
++              rightPanels: [
++                '@msk/extension-lisfranc.panelModule.lisfranc',
++                dicomSeg.panel,
++                tracked.measurements,
++              ],
++              rightPanelDefaultClosed: false,
+               viewports: [
+                 {
+                   namespace: tracked.viewport,

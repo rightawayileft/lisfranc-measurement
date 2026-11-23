@@ -1,0 +1,10 @@
+__pycache__/
+.pytest_cache/
+node_modules/
+*.pyc
+*.tgz
+*.log
+.env
+.env.*
+workspaces/demo/Lisfranc-Review.html
+workspaces/demo/THIRD-PARTY-NOTICES.txt
